@@ -15,7 +15,6 @@ from langchain_core.messages import HumanMessage, SystemMessage
 import trafilatura
 
 # --- CONFIGURATION ---
-MODEL_NAME = "google/gemma-4-2b-qat"
 BASE_URL = "http://localhost:1234/v1"
 CHAT_HISTORY_FILE = "maui_chats.json"
 
@@ -101,7 +100,7 @@ def detect_model():
             return models[0]
     except Exception:
         pass
-    return MODEL_NAME   # fallback ke config
+    return None   # tak ada model diload / server tak respon
 
 
 # --- TOKENIZER (anggaran; tiktoken cl100k_base cukup dekat utk Gemma) ---
@@ -231,10 +230,14 @@ def fetch_page_text(url):
 
 # --- THE RESEARCH ENGINE (Map-Reduce atas page sebenar) ---
 def deep_chunked_research(user_query):
+    model = detect_model()
+    if not model:
+        return ("⚠️ Tak dapat model dari LM Studio. Pastikan LM Studio running di "
+                f"{BASE_URL} dan ada model diload, kemudian cuba lagi.")
     llm = ChatOpenAI(
         base_url=BASE_URL,
         api_key="lm-studio",
-        model_name=detect_model(),
+        model_name=model,
         temperature=0.0,
     )
 

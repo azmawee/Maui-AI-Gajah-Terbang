@@ -15,21 +15,21 @@ Sejarah chat disimpan secara tempatan dalam fail `maui_chats.json`.
 
 App ni bergantung pada **LLM tempatan** yang berjalan di mesin anda melalui LM Studio. Setup penuh di bawah.
 
-### Langkah 1 — Pasang LM Studio
+### Langkah 1: Pasang LM Studio
 
 - Download dari **[lmstudio.ai](https://lmstudio.ai/)** (Windows / macOS / Linux) dan pasang.
 - Buka LM Studio.
 
-### Langkah 2 — Download model
+### Langkah 2: Download model
 
 - Pergi ke tab **Discover** (icon kaca mata di sidebar kiri).
-- Cari model. Skrip ni diconfigure untuk **`google/gemma-4-2b-qat`** (boleh cari kata kunci `gemma` / `qat`).
+- Cari model. Contoh yang disyorkan: **`google/gemma-4-2b-qat`** (boleh cari kata kunci `gemma` / `qat`), tapi anda boleh guna apa-apa model.
 - Pilih fail dalam format **GGUF** yang sesuai dengan RAM/VRAM mesin anda (size kecil = ringan & pantas, size besar = lebih pandai tapi perlukan lebih banyak memory).
 - Klik **Download** dan tunggu sampai siap (model boleh beberapa GB, bergantung pada size).
 
 > Tip: kalau mesin anda kurang RAM/V RAM, pilih varian model yang lebih kecil (cth. versi `2b`). Varian besar (7b+) mungkin perlukan GPU.
 
-### Langkah 3 — Hidupkan server
+### Langkah 3: Hidupkan server
 
 - Pergi ke tab **Developer** (icon `</>` di sidebar kiri) → bahagian **Server**.
 - Daripada dropdown model, pilih model yang baru anda download.
@@ -43,18 +43,14 @@ App ni bergantung pada **LLM tempatan** yang berjalan di mesin anda melalui LM S
 - (Server ni OpenAI-compatible, jadi `langchain-openai` boleh terus guna.) Pastikan status server = **Running**.
 - Boleh verify: buka `http://localhost:1234/v1/models` dalam browser — patut nampak senarai model yang diload.
 
-### Langkah 4 — Padankan nama model dengan skrip
+### Langkah 4: Model (auto-detect, tak perlu ubah apa-apa)
 
-Skrip menghantar nama model ini (dalam bahagian `# --- CONFIGURATION ---`):
+Skrip **auto-detect** model yang tengah diload dalam LM Studio. Ia panggil endpoint `http://localhost:1234/v1/models` dan ambil model pertama yang diload. Jadi anda **tak perlu** ubah apa-apa dalam skrip.
 
-```python
-MODEL_NAME = "google/gemma-4-2b-qat"
-BASE_URL   = "http://localhost:1234/v1"
-```
+- Kalau anda download model lain dan load dia je, script auto tangkap.
+- Kalau server tak running atau tiada model diload, app akan tunjuk mesej: **"Tak dapat model dari LM Studio. Pastikan LM Studio running dan ada model diload."**
 
-- Nilai `MODEL_NAME` **KENA sama** dengan **identifier** model yang diload dalam LM Studio (tengok nama model yang terpapar di tab **Developer**).
-- Kalau anda download model **lain**, kemaskini `MODEL_NAME` dalam skrip supaya sepadan dengan identifier di LM Studio.
-- `BASE_URL` biarkan default kecuali anda ubah port di LM Studio.
+> Peringatan: kalau anda load **beberapa model serentak** dalam LM Studio, script cuma ambil yang **pertama** dalam senarai. Untuk elakkan salah model, load satu model je.
 
 > Tanpa LM Studio berjalan di `localhost:1234`, app takkan dapat jawab soalan.
 
@@ -84,10 +80,11 @@ Browser akan terbuka dengan app tersebut.
 
 Tetapan utama ada di bahagian `# --- CONFIGURATION ---` dalam skrip:
 
-- `MODEL_NAME` — model yang diload dalam LM Studio.
-- `BASE_URL` — URL server LM Studio (default `http://localhost:1234/v1`).
-- `CHAT_HISTORY_FILE` — fail simpanan sejarah chat.
+- `BASE_URL`: URL server LM Studio (default `http://localhost:1234/v1`).
+- `CHAT_HISTORY_FILE`: fail simpanan sejarah chat.
+
+Model LLM **tak perlu config**, ia auto-detect dari LM Studio (lihat Langkah 4).
 
 ## License
 
-Dilesenkan di bawah **BSD 2-Clause License** — lihat fail [LICENSE](LICENSE).
+Dilesenkan di bawah **BSD 2-Clause License**, lihat fail [LICENSE](LICENSE).
