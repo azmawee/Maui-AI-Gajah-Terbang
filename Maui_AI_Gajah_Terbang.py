@@ -17,6 +17,7 @@ import trafilatura
 # --- CONFIGURATION ---
 BASE_URL = "http://localhost:1234/v1"
 CHAT_HISTORY_FILE = "maui_chats.json"
+DIRECT_ANSWER_FIRST = True   # True = model jawab dulu dari pengetahuan sendiri, search internet hanya bila perlu. False = sentiasa search (behavior lama)
 
 # --- RESEARCH CONFIG ---
 SEARCH_RESULTS = 8          # jumlah hasil carian dari DuckDuckGo
@@ -228,8 +229,35 @@ def fetch_page_text(url):
     return ""
 
 
-# --- THE RESEARCH ENGINE (Map-Reduce atas page sebenar) ---
-def deep_chunked_research(user_query):
+# --- DIRECT ANSWER (fikir dulu, search bila perlu) ---
+def try_direct_answer(llm, user_query):
+    """Cuba jawab terus dari pengetahuan model. Pulang (answer, needs_search).
+    needs_search=True bila model bagi isyarat SEARCH_NEEDED, jawapan kosong, atau invoke gagal."""
+    prompt = (
+        f"SOALAN PENGGUNA: {user_query}\n\n"
+        f"TUGASAN: Tentukan anda boleh jawab dengan tepat dari pengetahuan sendiri, "
+        f"atau perlu carian internet. Pilih SALAH SATU:\n\n"
+        f"A) Jawab terus, HANYA kalau ilmu umum stabil (definisi, konsep, matematik, "
+        f"logik, terjemahan, nasihat, teori). Jawab lengkap dalam bahasa soalan.\n"
+        f"B) Taip HANYA: SEARCH_NEEDED, kalau soalan libatkan versi software, tarikh, "
+        f"harga, berita, peristiwa semasa, statistik terkini, data berubah, atau fakta "
+        f"yang anda tak pasti.\n\n"
+        f"Jangan campur A dan B. Kalau ragu, pilih B."
+    )
+    try:
+        resp = llm.invoke(prompt)
+        text = (resp.content or "").strip()
+    except Exception:
+        return None, True
+    if not text or text.upper().strip().startswith("SEARCH_NEEDED"):
+        return None, True
+    return text, False
+
+
+# --- ENTRY POINT (pilih: jawab terus atau search) ---
+def answer_query(user_query):
+    """Detect model sekali, cuba direct answer dulu (kalau DIRECT_ANSWER_FIRST),
+    fallback ke deep_chunked_research bila perlu search."""
     model = detect_model()
     if not model:
         return ("⚠️ Tak dapat model dari LM Studio. Pastikan LM Studio running di "
@@ -240,6 +268,25 @@ def deep_chunked_research(user_query):
         model_name=model,
         temperature=0.0,
     )
+
+    if DIRECT_ANSWER_FIRST:
+        status = st.empty()
+        try:
+            status.markdown("🧠 *Memikir jawapan, tengok perlu search ke tak...*")
+            direct, needs_search = try_direct_answer(llm, user_query)
+        finally:
+            status.empty()
+        if not needs_search and direct:
+            return (direct +
+                    "\n\n_(Jawapan dari pengetahuan model, tanpa carian internet. "
+                    "Verify jika perlu.)_")
+
+    return deep_chunked_research(user_query, llm)
+
+
+# --- THE RESEARCH ENGINE (Map-Reduce atas page sebenar) ---
+def deep_chunked_research(user_query, llm):
+    # llm di-detect & dibuat sekali oleh answer_query(), pass masuk supaya tak duplicate.
 
     # Status tunjuk semasa proses je (satu baris, update in-place),
     # lepas habis dikosongkan dgn finally -> tak tinggal dalam chat.
@@ -394,7 +441,7 @@ else:
         with st.chat_message("user"): st.markdown(prompt_input)
         with st.chat_message("assistant"):
             with st.spinner("Menganalisis Intelligence..."):
-                ans = deep_chunked_research(prompt_input)
+                ans = answer_query(prompt_input)
                 st.markdown(ans)
                 current_chat["messages"].append({"role": "assistant", "content": ans})
                 save_chats(st.session_state.chats)

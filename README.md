@@ -1,11 +1,12 @@
 # Maui AI Gajah Terbang 🐘
 
-Pembantu penyelidikan berasaskan **Streamlit** yang menggunakan **LLM tempatan** (LM Studio) untuk menjawab soalan. Untuk setiap soalan, ia akan:
+Pembantu penyelidikan berasaskan **Streamlit** yang menggunakan **LLM tempatan** (LM Studio) untuk menjawab soalan. Untuk setiap soalan, ia **fikir dulu**:
 
-1. Mencari di **DuckDuckGo**,
-2. Membaca dan mengekstrak teks dari page teratas (guna `trafilatura`),
-3. Membahagikan kandungan kepada blok dan markah kerelevanan,
-4. Menghantar blok terbaik ke LLM tempatan untuk hasilkan jawapan dalam bahasa pengguna.
+1. Cuba jawab terus dari pengetahuan model (cepat, tak perlu internet), kalau soalan itu ilmu umum,
+2. Kalau perlu data terkini / fakta khusus / model tak pasti, baru search di **DuckDuckGo**,
+3. Baca dan ekstrak teks dari page teratas (guna `trafilatura`),
+4. Bahagikan kandungan kepada blok, pilih yang relevan,
+5. Hantar blok terbaik ke LLM tempatan untuk hasilkan jawapan dalam bahasa pengguna.
 
 Sejarah chat disimpan secara tempatan dalam fail `maui_chats.json`.
 
@@ -100,7 +101,8 @@ Browser akan terbuka dengan app tersebut.
 
 ## Cara ia berfungsi
 
-- **Carian:** DuckDuckGo (tiada API key diperlukan).
+- **Fikir dulu:** model cuba jawab terus dari pengetahuan sendiri untuk soalan ilmu umum. Tak search langsung, jadi laju.
+- **Carian (bila perlu):** DuckDuckGo (tiada API key diperlukan), hanya bila model tak pasti atau soalan perlukan data terkini / fakta khusus.
 - **Ekstraksi page:** `trafilatura`.
 - **Tokenisasi:** `tiktoken`.
 - **LLM:** melalui `langchain-openai` ke server LM Studio tempatan.
@@ -112,6 +114,7 @@ Tetapan utama ada di bahagian `# --- CONFIGURATION ---` dalam skrip:
 
 - `BASE_URL`: URL server LM Studio (default `http://localhost:1234/v1`).
 - `CHAT_HISTORY_FILE`: fail simpanan sejarah chat.
+- `DIRECT_ANSWER_FIRST`: `True` (default) = model jawab dulu, search internet hanya bila perlu. `False` = sentiasa search (behavior lama).
 
 Model LLM **tak perlu config**, ia auto-detect dari LM Studio (lihat Langkah 4).
 
