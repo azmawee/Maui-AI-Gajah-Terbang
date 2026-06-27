@@ -264,7 +264,7 @@ def deep_chunked_research(user_query):
             if text:
                 pages.append({"title": title, "url": url, "text": text})
 
-        # SENTIASA masukkan ringkasan carian DDG (snippet) sebagai sumber #1 — bukan
+        # SENTIASA masukkan ringkasan carian DDG (snippet) sebagai sumber #1, bukan
         # fallback je. Snippet ialah penilaian relevan DDG sendiri:通用 utk soalan apa
         # pun, kerap ada jawapan terus, tak bergantung pada heuristik ranking chunk.
         snip_text = "\n".join(
@@ -292,7 +292,7 @@ def deep_chunked_research(user_query):
         best_per_page.sort(key=lambda c: score_chunk(c, keywords), reverse=True)
         chunks = best_per_page[:MAX_CHUNKS]   # HAD KERAS: potong ke MAX_CHUNKS
 
-        # Step 4: JAWAPAN TERUS — hantar SEMUA chunk terpilih ke model dalam SATU
+        # Step 4: JAWAPAN TERUS: hantar SEMUA chunk terpilih ke model dalam SATU
         # panggilan. Versi lama ada langkah MAP per-chunk dgn gate "NONE": bila model
         # tak berani petik fakta dari table, jawapan sebenar kena reject sebagai NONE
         # -> tarikh hilang -> "tak jumpa fakta". Model 26B cukup mampu baca semua chunk
@@ -306,7 +306,7 @@ def deep_chunked_research(user_query):
             f"SUMBER INTERNET (petikan):\n{combined}\n\n"
             f"SOALAN PENGGUNA: {user_query}\n\n"
             f"TUGASAN: Jawab soalan pengguna berdasarkan sumber di atas sahaja, ikut apa "
-            f"yang ditanya — beri tarikh kalau soal tarikh, nombor kalau soal nombor, atau "
+            f"yang ditanya, beri tarikh kalau soal tarikh, nombor kalau soal nombor, atau "
             f"apa sahaja maklumat berkaitan yang sesuai. Petik tepat dari sumber (termasuk "
             f"dari jadual/table). Jika sumber tak cukup, beritahu apa yang ada dan apa yang "
             f"tertinggal. Jawab dalam bahasa soalan."
@@ -318,7 +318,7 @@ def deep_chunked_research(user_query):
             answer = "⚠️ Model tak boleh jana jawapan sekarang. Cuba lagi."
 
         # Step 6: Lampir sumber (utk verify)
-        src_lines = [f"- {p['title']} — {p['url']}" for p in pages[:5] if p.get("url")]
+        src_lines = [f"- {p['title']}, {p['url']}" for p in pages[:5] if p.get("url")]
         if src_lines:
             answer += "\n\n**Sumber:**\n" + "\n".join(src_lines)
 

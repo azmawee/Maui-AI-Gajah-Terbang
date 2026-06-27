@@ -41,7 +41,7 @@ App ni bergantung pada **LLM tempatan** yang berjalan di mesin anda melalui LM S
   ```
 
 - (Server ni OpenAI-compatible, jadi `langchain-openai` boleh terus guna.) Pastikan status server = **Running**.
-- Boleh verify: buka `http://localhost:1234/v1/models` dalam browser — patut nampak senarai model yang diload.
+- Boleh verify: buka `http://localhost:1234/v1/models` dalam browser, patut nampak senarai model yang diload.
 
 ### Langkah 4: Model (auto-detect, tak perlu ubah apa-apa)
 
