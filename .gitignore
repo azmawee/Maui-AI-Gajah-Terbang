@@ -1,0 +1,17 @@
+# Python bytecode / cache
+__pycache__/
+*.py[cod]
+*.egg-info/
+
+# Python virtual env
+.venv/
+venv/
+
+# App runtime state — JANGAN commit (data chat peribadi)
+maui_chats.json
+
+# Editor / tooling tempatan
+.claude/
+.claudeignore
+.idea/
+.vscode/
