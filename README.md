@@ -13,7 +13,43 @@ Sejarah chat disimpan secara tempatan dalam fail `maui_chats.json`.
 
 ## Prerequisites
 
-App ni bergantung pada **LLM tempatan** yang berjalan di mesin anda melalui LM Studio. Setup penuh di bawah.
+Ada dua benda kena pasang dulu sebelum run app ni: **Python + pip** (untuk jalankan kod Streamlit) dan **LM Studio** (untuk LLM tempatan yang jawab soalan). Ikut urutan bawah.
+
+### Python & pip
+
+1. Pasang **Python 3.10 atau lebih baru** dari [python.org](https://www.python.org/downloads/).
+   - **Windows:** semak kotak **"Add Python to PATH"** masa install. Penting, kalau tak, `python` dan `pip` tak dikenali dalam terminal.
+   - **macOS:** `brew install python`.
+   - **Linux (Debian/Ubuntu):** `sudo apt install python3 python3-pip`.
+2. Verify kedua-duanya dah ada:
+   ```bash
+   python --version      # patut 3.10 ke atas
+   pip --version         # patut ada
+   ```
+   - Sesetengah mesin guna `python3` / `pip3` ganti `python` / `pip`, tukar kalau command tak dikenali.
+3. Kalau `pip` tak jumpa, pasang dia:
+   ```bash
+   python -m ensurepip --upgrade
+   ```
+
+### Pasang dependencies
+
+Dengan Python + pip dah sedia, pasang package yang app perlukan:
+
+```bash
+pip install -r requirements.txt
+```
+
+Digalakkan guna **virtual environment** supaya package ni tak konflik dengan projek lain di mesin anda:
+
+```bash
+python -m venv .venv
+.venv\Scripts\activate          # Windows
+# source .venv/bin/activate     # macOS / Linux
+pip install -r requirements.txt
+```
+
+Selepas itu, setup LM Studio (Langkah 1-4 di bawah). App jawab soalan guna LLM tempatan di mesin anda, bukan API cloud.
 
 ### Langkah 1: Pasang LM Studio
 
@@ -53,12 +89,6 @@ Skrip **auto-detect** model yang tengah diload dalam LM Studio. Ia panggil endpo
 > Peringatan: kalau anda load **beberapa model serentak** dalam LM Studio, script cuma ambil yang **pertama** dalam senarai. Untuk elakkan salah model, load satu model je.
 
 > Tanpa LM Studio berjalan di `localhost:1234`, app takkan dapat jawab soalan.
-
-## Install
-
-```bash
-pip install -r requirements.txt
-```
 
 ## Run
 
