@@ -12,6 +12,22 @@ Sejarah chat disimpan secara tempatan dalam fail `maui_chats.json`.
 
 ---
 
+## Tangkap layar
+
+**Antaramuka utama.** Sidebar untuk urus sejarah chat (New Chat, Sembang Lepas, Padam Semua). Untuk soalan ilmu umum, model jawab terus dari pengetahuan sendiri tanpa carian internet:
+
+<p align="center">
+  <img src="screenshots/Panel01.png" alt="Antaramuka utama Maui AI dengan jawapan terus dari pengetahuan model" width="800">
+</p>
+
+**"Fikir dulu."** Untuk setiap soalan, model tentukan dulu sama ada perlu search internet atau cukup jawab terus:
+
+<p align="center">
+  <img src="screenshots/Panel02.png" alt="Model sedang memikir sama ada perlu carian internet atau tidak" width="800">
+</p>
+
+---
+
 ## Prerequisites
 
 Ada dua benda kena pasang dulu sebelum run app ni: **Python + pip** (untuk jalankan kod Streamlit) dan **LM Studio** (untuk LLM tempatan yang jawab soalan). Ikut urutan bawah.
@@ -79,6 +95,12 @@ Selepas itu, setup LM Studio (Langkah 1-4 di bawah). App jawab soalan guna LLM t
 
 - (Server ni OpenAI-compatible, jadi `langchain-openai` boleh terus guna.) Pastikan status server = **Running**.
 - Boleh verify: buka `http://localhost:1234/v1/models` dalam browser, patut nampak senarai model yang diload.
+
+Contoh server LM Studio yang dah hidup di `http://localhost:1234` (status **Running**, model diload = READY):
+
+<p align="center">
+  <img src="screenshots/lmstudio.png" alt="LM Studio dengan server hidup di localhost:1234 dan model diload" width="800">
+</p>
 
 ### Langkah 4: Model (auto-detect, tak perlu ubah apa-apa)
 
